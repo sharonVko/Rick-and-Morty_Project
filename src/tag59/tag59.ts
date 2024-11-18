@@ -1,6 +1,6 @@
-console.log("test");
-import { ICharacter } from "../contracts/ICharacter";
-import { IEpisode, IEpisodeResult } from '../contracts/IEpisode';
+import { IEpisodeResult } from "../contracts/IEpisode";
+import { ICharacterResult } from "../contracts/ICharacter";
+import { ILocationResult } from "../contracts/ILocation";
 
 //HAUPTEINGANG
 const BASE_URL = "https://rickandmortyapi.com/api";
@@ -47,7 +47,7 @@ function displayCharacter (character: ICharacterResult):string {
 }
 
 
-locationElement?addEventListener('click', async() => {
+locationElement?.addEventListener('click', async() => {
     try {
         const response = await fetch(LOCATION_ROUTE)
         const data = await response.json()
@@ -61,16 +61,18 @@ locationElement?addEventListener('click', async() => {
     }
 })
 
+// hier brauchen wir ein promise, wegen der async function darüber. 
 
-async function displayLocation(location: ILocation):Promise<string> { // hier brauchen wir ein promise, wegen der async function darüber. 
-   const residents = await fetchResidents(location.residents); 
+
+async function displayLocation(location: ILocationResult): Promise<string> { 
+   //const residents = await fetchResidents(location.residents); 
    const resultAsString = `
    <p>Name:${location.name}</p>
-   <p>Type:${location.type}<p>
-   <p>Residents: ${residents}</p>`
+   <p>Type:${location.type}</p>
+   <p>Residents: ${await fetchResidents(location.residents)}</p>`
    return resultAsString;
-
 }
+
 
 async function fetchResidents(locationResidents:string[]):Promise<string> {
     const resultArray:string[] = [];
@@ -102,10 +104,9 @@ episodeElement?.addEventListener('click', async() => {
             episodeDiv.innerHTML = await displayEpisode(result)
             outputElement.appendChild(episodeDiv)
         }))
-        outputElement.appendChild(await displayEpisode(result))
 
     } catch (error) {
-        
+      console.error(error)  
     }
 })
 

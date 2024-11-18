@@ -1,4 +1,3 @@
-
 export interface IEpisode {
   info: IInfo;
   results: IEpisodeResult[];
